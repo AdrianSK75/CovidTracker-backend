@@ -7,7 +7,7 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Route::get("/game", function() {
-    return Game::all();
-});
+//Route::get("/game", function() {
+    //return Game::all();
+//});
 
