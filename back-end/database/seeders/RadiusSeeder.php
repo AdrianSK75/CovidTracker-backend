@@ -8,8 +8,8 @@ use App\Models\Game;
 
 class RadiusSeeder extends Seeder
 {
-    public function run()
-    {
-        Radius::factory()->times(30)->create();
+    public function run() {
+        $game = Game::findOrFail(1);
+        Radius::factory()->times(intval($game->difficulty * 33.34))->create();
     }
 }
