@@ -11,11 +11,18 @@ use Illuminate\Support\Facades\Artisan;
 
 class GameController extends Controller {
     public function game() {
+        $migrate = Artisan::call("migrate:refresh --path=/database/migrations/2021_11_13_080654_create_radii_table.php");
+        $seed = Artisan::call('db:seed --class=RadiusSeeder');
         $radius = DB::table('radii')->select('latitude', 'longitude')->get();
         $location = DB::table('games')->select('latitude', 'longitude')->first();
         return response()->json([
             "status" => 200,
-            "game" => ["radius" => $radius, "location" => $location],
+            "game" => [
+                        'migrate' => $migrate,
+                        'seed' => $seed,
+                        'radii' => $radius,
+                        'location' => $location
+                    ],
             "message" => "Game Created Successfully"
         ]);
     }
