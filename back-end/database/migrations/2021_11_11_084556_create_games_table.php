@@ -10,6 +10,7 @@ class CreateGamesTable extends Migration
     {
         Schema::create('games', function (Blueprint $table) {
             $table->id();
+            $table->foreignId("user_id");
             $table->string("difficulty");
             $table->decimal("latitude", 8, 5);
             $table->decimal("longitude", 8, 5);

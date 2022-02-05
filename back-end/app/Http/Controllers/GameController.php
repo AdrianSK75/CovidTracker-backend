@@ -29,7 +29,6 @@ class GameController extends Controller {
 
     public function refresh() {
         $migrate = Artisan::call('migrate:refresh');
-        //$routesCleared = Artisan::call('route:clear');
         return response()->json([
             "status" => 200,
             "data" => ["migrate" => $migrate]
