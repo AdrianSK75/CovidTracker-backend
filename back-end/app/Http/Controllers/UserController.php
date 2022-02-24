@@ -4,37 +4,60 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\User;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller {
-    public function login() {
-        $users = User::all();
-        return response()->json([
-            "status" => 200,
-            "data" => $users,
-            "message" => "Account Created Successfully"
-        ]);
+    public function profile() {
+            return response([
+                Auth::user(),
+                Auth::user()->game
+            ], 200);
     }
-    public function register(Request $request) {
-            $validator = Validator::make($request->all(), [
-                'name' => 'required',
-                'password' => 'required',
+
+    public function login(Request $request) {
+            $fields = $request->validate([
+                'name' => 'required|string',
+                'password' => 'required|string'
             ]);
-            if ($validator->fails()) {
-                return response()->json(["status" => 422,
-                "message" => "Validation error",
-                "errors" => $validator->errors()]);
+            //return $fields;
+            $user = User::where('name', $fields['name'])->first();
+            if (!$user || !Hash::check($fields['password'], $user->password)) {
+                    return response([
+                        'message' => 'Bad creds'
+                    ], 401);
             }
-            $user = new User;
-            $user->name = $request->input("name");
-            $user->password = Hash::make($request->input("password"));
-            $user->save();
-            return response()->json([
-                "status" => 200,
-                "message" => "Account Created Successfully"
+            $token = $user->createToken('usertoken')->plainTextToken;
+            $response = [
+                'user' => $user,
+                'token' => $token
+            ];
+            return response($response, 200);
+    }
+
+    public function logout(Request $request) {
+            $request->user()->tokens->delete();
+
+            return [
+                'message' => 'Logged out'
+            ];
+    }
+
+    public function register(Request $request) {
+            $fields = $request->validate([
+                    'name' => 'required|string',
+                    'password' => 'required|string|confirmed'
             ]);
+            $user = User::create([
+                'name' => $fields['name'],
+                'password' => Hash::make($fields['password'])
+            ]);
+            $token = $user->createToken('usertoken')->plainTextToken;
+            $response = [
+                'user' => $user,
+                'token' => $token
+            ];
+            return response($response, 200);
     }
 
 }

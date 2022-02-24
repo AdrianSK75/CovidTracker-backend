@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateRadiiTable extends Migration
+class CreateGamesTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,20 +13,19 @@ class CreateRadiiTable extends Migration
      */
     public function up()
     {
-        if (!Schema::hasTable('radii')) {
-                Schema::create('radii', function (Blueprint $table) {
+        if (!Schema::hasTable('games')) {
+            Schema::create('games', function (Blueprint $table) {
                     $table->id();
-                    $table->foreignId('game_id')
-                            ->constrained('games', 'id')
-                            ->onCascadeUpdate()
-                            ->onCascadeDelete();
+                    $table->foreignId("user_id")
+                            ->constrained('users', 'id')
+                            ->unique();
+                    $table->string("address");
+                    $table->string("difficulty");
                     $table->decimal("latitude", 8, 5);
                     $table->decimal("longitude", 8, 5);
                     $table->timestamps();
                 });
         }
-
-        // Foreign key to Games Table
     }
 
     /**
@@ -36,6 +35,8 @@ class CreateRadiiTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('radii');
+        Schema::disableForeignKeyConstraints();
+        Schema::dropIfExists('games');
+        Schema::enableForeignKeyConstraints();
     }
 }

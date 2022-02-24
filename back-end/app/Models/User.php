@@ -13,6 +13,8 @@ class User extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable;
 
+    protected $table = 'users';
+
     protected $fillable = [
         'name',
         'password',
@@ -23,7 +25,10 @@ class User extends Authenticatable
     ];
 
     public function game() {
-            return $this->hasMany(Game::class);
+            return $this->hasMany(Game::class, 'user_id');
+    }
+    public function groups() {
+        return $this->belongsToMany(Group::class)->using(GroupsUsers::class);
     }
 
 }

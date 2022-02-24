@@ -19,10 +19,11 @@ class RadiusFactory extends Factory
 
     public function definition()
     {
-        $game = Game::findOrFail(1);
+        $game = Game::findOrFail(auth()->user()->id);
         return [
-            'latitude' => self::rand_float($game->latitude / 2, $game->latitude * 2),
-            'longitude' => self::rand_float($game->longitude / 2, $game->longitude * 2),
+            'game_id' => $game->id,
+            'latitude' => self::rand_float(-80.99999, 80.99999),
+            'longitude' => self::rand_float(-175.99999, 175.99999),
         ];
     }
 }

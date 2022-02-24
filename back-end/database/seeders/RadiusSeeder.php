@@ -9,7 +9,7 @@ use App\Models\Game;
 class RadiusSeeder extends Seeder
 {
     public function run() {
-        $game = Game::findOrFail(1);
+        $game = Game::findOrFail(auth()->user()->id);
         Radius::factory()->times(intval($game->difficulty * 33.34))->create();
     }
 }

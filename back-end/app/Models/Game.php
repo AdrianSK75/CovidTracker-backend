@@ -10,7 +10,10 @@ class Game extends Model
 {
     use HasFactory;
 
+    protected $table = 'games';
+
     protected $fillable = [
+        'user_id',
         'difficulty',
         'longitude',
         'latitude',
@@ -19,4 +22,11 @@ class Game extends Model
     public function user() {
         return $this->belongsTo(User::class);
     }
+    public function radii() {
+        return $this->hasMany(Radius::class);
+    }
+    public function group() {
+        return $this->hasMany(Group::class);
+    }
+
 }
