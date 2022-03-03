@@ -7,12 +7,13 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\DB;
 use App\Models\Radius;
 use App\Models\Game;
+use Illuminate\Support\Facades\Artisan;
 //use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Auth;
 
 class GameController extends Controller {
-    public function refresh($game, $id) {
-        if (count($game) > 0) {
+    public function refresh($radii, $id) {
+        if (count($radii) > 0) {
                 Radius::where('game_id', $id)->delete();
         }
         return response()->json([
@@ -20,15 +21,19 @@ class GameController extends Controller {
         ]);
     }
     public function game($game_id) {
-        $game = Game::where('user_id', $game_id)->first();
+       // return $game_id;
+        $game = Game::findOrFail($game_id);
+        //return $game;
         //return $game->radii;
         self::refresh($game->radii, $game->id);
-        Radius::factory()->times(intval($game->difficulty * 33.34))->create();
+        $migrate = Artisan::call('db:seed --class=RadiusSeeder');
         $radius = Radius::where('game_id', $game->id)->get();
-        $location = Game::where('user_id', auth()->user()->id)->select('latitude', 'longitude')->first();
+        $location = $game->select('latitude', 'longitude')->first();
         return response()->json([
             "status" => 200,
+            "for group" => $game_id,
             "game" => [
+                        'migrate' => $migrate,
                         'radii' => $radius,
                         'location' => $location
                     ],
@@ -36,42 +41,28 @@ class GameController extends Controller {
         ]);
     }
 
-    public function store(Request $request) {
+    public function store($request) {
             $validator = Validator::make($request->all(), [
                 'difficulty' => 'required',
-                'address' => 'required',
+                'name' => 'required',
                 'longitude' => 'required',
                 'latitude' => 'required',
             ]);
 
-            if($validator->fails()) {
+            if ($validator->fails()) {
                 return response()->json(["status" => 422,
                 "message" => "Validation error",
                 "errors" => $validator->errors()]);
             }
-            Game::create([
+            $game = Game::create([
                 'user_id' => Auth::id(),
                 'difficulty' => $request->input("difficulty"),
-                'address' => $request->input("address"),
+                'name' => $request->input("name"),
                 'latitude' => $request->input("latitude"),
                 'longitude' => $request->input("longitude")
             ]);
-            return response()->json([
-                "status" => 200,
-                "message" => "Game Created Successfully"
-            ]);
+            return response($game);
     }
 
-    public function delete() {
-            $game = DB::where('user_id', auth()->user()->id)->first();
-            if (count(Radius::where('game_id', $game->id)->get()) > 0) {
-                    //self::refresh($game);
-            }
-            $game->delete();
-
-            return response([
-               "message" => "The game was deleted"
-            ], 200);
-    }
 }
 

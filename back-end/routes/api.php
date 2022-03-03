@@ -7,6 +7,8 @@ use App\Http\Controllers\GameController;
 use App\Http\Controllers\GroupController;
 use App\Http\Controllers\UserController;
 use App\Models\Game;
+use App\Models\GroupsUsers;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
@@ -22,8 +24,9 @@ Route::group(['middleware' => 'auth:sanctum'], function() {
     Route::get('/game', [GameController::class, 'game']);
 
     Route::post("/group/create", [GroupController::class, 'create']);
-    Route::get("/group/{group::id}/join", [GroupController::class, 'join']);
+    Route::post("/group/{group::id}/join", [GroupController::class, 'join']);
     Route::get("/group/{group::id}", [GroupController::class, 'current_lobby']);
+    //Route::get("/left", [GroupController::class, 'left']);
     Route::get("/group/{group::id}/run", [GroupController::class, 'run']);
     Route::get("/groups", [GroupController::class, 'dashboard']);
     Route::get("group/{group::id}/delete", [GroupController::class, 'end']);
@@ -32,7 +35,7 @@ Route::group(['middleware' => 'auth:sanctum'], function() {
     Route::get('/profile', [UserController::class, 'profile']);
 
     Route::get("/test", function() {
-        return Game::findOrFail(1)->radii;
+        return GroupsUsers::where('user_id', auth()->id())->first();
     });
 });
 

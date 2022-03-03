@@ -14,6 +14,7 @@ class Game extends Model
 
     protected $fillable = [
         'user_id',
+        'name',
         'difficulty',
         'longitude',
         'latitude',

@@ -19,7 +19,7 @@ class CreateGamesTable extends Migration
                     $table->foreignId("user_id")
                             ->constrained('users', 'id')
                             ->unique();
-                    $table->string("address");
+                    $table->string("name");
                     $table->string("difficulty");
                     $table->decimal("latitude", 8, 5);
                     $table->decimal("longitude", 8, 5);

@@ -23,10 +23,12 @@ class GameFactory extends Factory
 
             return [
                 'user_id' => 1,
-                "address" => $this->faker->name(),
+                "name" => $this->faker->name(),
                 'difficulty' => 1,
-                'latitude' => self::rand_float(-80.99999, 80.99999),
-                'longitude' => self::rand_float(-175.99999, 175.99999)
+                'latitude' => 46.76902168860776,
+                'longitude' => 23.63745308018076
             ];
     }
 }
+// 46.76902168860776, 23.63745308018076
+// self::rand_float(-80.99999, 80.99999) , self::rand_float(-175.99999, 175.99999)

@@ -4,6 +4,8 @@ namespace Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
 use App\Models\Game;
+use App\Models\Group;
+use App\Models\GroupsUsers;
 
 class RadiusFactory extends Factory
 {
@@ -19,9 +21,10 @@ class RadiusFactory extends Factory
 
     public function definition()
     {
-        $game = Game::findOrFail(auth()->user()->id);
+        $group_with_users = GroupsUsers::where('user_id', auth()->user()->id)->first();
+        $group = Group::findOrFail($group_with_users->group_id);
         return [
-            'game_id' => $game->id,
+            'game_id' => $group->game->id,
             'latitude' => self::rand_float(-80.99999, 80.99999),
             'longitude' => self::rand_float(-175.99999, 175.99999),
         ];

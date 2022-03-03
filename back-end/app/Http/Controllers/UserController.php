@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\GroupsUsers;
 use Illuminate\Http\Request;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
@@ -36,10 +37,15 @@ class UserController extends Controller {
     }
 
     public function logout(Request $request) {
-            $request->user()->tokens->delete();
+            //$is_in_group = GroupsUsers::where('user_id', auth()->id())->first();
+            //if (count($is_in_group) == 1) {
+              //  $is_in_group->delete();
+            //}
+            $user_tokens = auth()->user()->tokens->each;
+            $user_tokens->delete();
 
             return [
-                'message' => 'Logged out'
+                'message' => 'The '. auth()->user()->name .' was Logged out'
             ];
     }
 
